@@ -1,3 +1,5 @@
+using DevFlow.Api.Infrastructure.Errors;
+using DevFlow.Application.Abstractions;
 using DevFlow.Application.Organizations.CreateOrganization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +10,10 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<CreateOrganizationHandler>();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+builder.Services.AddScoped<ICommandHandler<CreateOrganizationCommand, CreateOrganizationResult>, CreateOrganizationHandler>();
 
 var app = builder.Build();
 
@@ -17,6 +22,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 

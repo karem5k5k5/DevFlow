@@ -1,8 +1,9 @@
+using DevFlow.Application.Abstractions;
 using DevFlow.Domain.Organizations;
 
 namespace DevFlow.Application.Organizations.CreateOrganization;
 
-public sealed class CreateOrganizationHandler
+public sealed class CreateOrganizationHandler : ICommandHandler<CreateOrganizationCommand, CreateOrganizationResult>
 {
     public CreateOrganizationResult Handle(
         CreateOrganizationCommand command)
