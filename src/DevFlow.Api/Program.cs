@@ -1,3 +1,5 @@
+using DevFlow.Application.Organizations.CreateOrganization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<CreateOrganizationHandler>();
 
 var app = builder.Build();
 

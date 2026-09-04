@@ -1,1 +1,7 @@
+# Create Organization
+POST http://localhost:5217/api/v1/organizations
+Content-Type: application/json
 
+{
+    "name":"Acme Engineering"
+}
