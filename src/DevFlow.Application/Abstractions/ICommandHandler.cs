@@ -1,6 +1,8 @@
 namespace DevFlow.Application.Abstractions;
 
-public interface ICommandHandler<in TCommand, out TResult>
+public interface ICommandHandler<in TCommand, TResult>
 {
-    TResult Handle(TCommand command);
+    Task<TResult> Handle(
+        TCommand command,
+        CancellationToken cancellationToken);
 }

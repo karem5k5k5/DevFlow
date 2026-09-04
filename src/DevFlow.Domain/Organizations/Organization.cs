@@ -1,3 +1,5 @@
+using DevFlow.Domain.Common.Exceptions;
+
 namespace DevFlow.Domain.Organizations;
 
 public sealed class Organization
@@ -21,18 +23,14 @@ public sealed class Organization
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException(
-                "Organization name is required.",
-                nameof(name));
+            throw new DomainException("Organization name is required.");
         }
 
         name = name.Trim();
 
         if (name.Length > 100)
         {
-            throw new ArgumentException(
-                "Organization name cannot exceed 100 characters.",
-                nameof(name));
+            throw new DomainException("Organization name cannot exceed 100 characters.");
         }
 
         return new Organization(Guid.NewGuid(), name);

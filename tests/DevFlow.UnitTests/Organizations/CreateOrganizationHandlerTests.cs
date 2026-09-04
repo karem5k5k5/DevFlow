@@ -1,32 +1,40 @@
-using DevFlow.Application.Organizations.CreateOrganization;
+using DevFlow.Domain.Common.Exceptions;
 using DevFlow.Application.Abstractions;
+using DevFlow.Application.Organizations.CreateOrganization;
 
 namespace DevFlow.UnitTests.Organizations;
 
 public class CreateOrganizationHandlerTests
 {
     [Fact]
-    public void Handle_CreatesOrganization()
+    public async Task Handle_CreatesOrganization()
     {
-        ICommandHandler<CreateOrganizationCommand, CreateOrganizationResult> handler = new CreateOrganizationHandler();
+        ICommandHandler<
+            CreateOrganizationCommand,
+            CreateOrganizationResult> handler =
+            new CreateOrganizationHandler();
 
         var command = new CreateOrganizationCommand(
             "Acme Engineering");
 
-        var result = handler.Handle(command);
+        var result = await handler.Handle(
+            command,
+            CancellationToken.None);
 
         Assert.NotEqual(Guid.Empty, result.Id);
         Assert.Equal("Acme Engineering", result.Name);
     }
 
     [Fact]
-    public void Handle_WithInvalidName_Throws()
+    public async Task Handle_WithInvalidName_Throws()
     {
-        ICommandHandler<CreateOrganizationCommand, CreateOrganizationResult> handler = new CreateOrganizationHandler();
+        var handler = new CreateOrganizationHandler();
 
         var command = new CreateOrganizationCommand("");
 
-        Assert.Throws<ArgumentException>(
-            () => handler.Handle(command));
+        await Assert.ThrowsAsync<DomainException>(
+            () => handler.Handle(
+                command,
+                CancellationToken.None));
     }
 }

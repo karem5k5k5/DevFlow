@@ -17,14 +17,25 @@ public sealed class OrganizationsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Create(CreateOrganizationRequest request)
+    public async Task<IActionResult> Create(
+    CreateOrganizationRequest request,
+    CancellationToken cancellationToken)
     {
         var command = new CreateOrganizationCommand(request.Name);
 
-        var result = _handler.Handle(command);
+        var result = await _handler.Handle(
+            command,
+            cancellationToken);
 
-        return Created(
-            $"/api/v1/organizations/{result.Id}",
+        return CreatedAtAction(
+            nameof(GetById),
+            new { id = result.Id },
             result);
+    }
+
+    [HttpGet("{id:guid}")]
+    public IActionResult GetById(Guid id)
+    {
+        return NotFound();
     }
 }

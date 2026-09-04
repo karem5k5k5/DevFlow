@@ -1,4 +1,5 @@
 using DevFlow.Domain.Organizations;
+using DevFlow.Domain.Common.Exceptions;
 
 namespace DevFlow.UnitTests.Organizations;
 
@@ -24,12 +25,8 @@ public class OrganizationTests
     [Fact]
     public void Create_WithEmptyName_Throws()
     {
-        var exception = Assert.Throws<ArgumentException>(
+        var exception = Assert.Throws<DomainException>(
             () => Organization.Create(""));
-
-        Assert.Equal(
-            "name",
-            exception.ParamName);
     }
 
     [Fact]
@@ -37,7 +34,7 @@ public class OrganizationTests
     {
         var name = new string('A', 101);
 
-        Assert.Throws<ArgumentException>(
+        Assert.Throws<DomainException>(
             () => Organization.Create(name));
     }
 }

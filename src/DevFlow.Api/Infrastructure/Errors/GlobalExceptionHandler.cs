@@ -1,3 +1,4 @@
+using DevFlow.Domain.Common.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,15 +23,36 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
             exception,
             "An unhandled exception occurred.");
 
-        var problemDetails = new ProblemDetails
+        var statusCode = exception switch
         {
-            Status = StatusCodes.Status400BadRequest,
-            Title = "Request could not be processed.",
-            Detail = exception.Message
+            DomainException =>
+                StatusCodes.Status400BadRequest,
+
+            _ =>
+                StatusCodes.Status500InternalServerError
         };
 
-        httpContext.Response.StatusCode =
-            StatusCodes.Status400BadRequest;
+        var title = exception switch
+        {
+            DomainException =>
+                "The request could not be processed.",
+
+            _ =>
+                "An unexpected error occurred."
+        };
+
+        var detail = exception is DomainException
+            ? exception.Message
+            : "An unexpected error occurred.";
+
+        var problemDetails = new ProblemDetails
+        {
+            Status = statusCode,
+            Title = title,
+            Detail = detail
+        };
+
+        httpContext.Response.StatusCode = statusCode;
 
         await httpContext.Response.WriteAsJsonAsync(
             problemDetails,
