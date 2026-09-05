@@ -8,16 +8,30 @@ public sealed class CreateOrganizationHandler
         CreateOrganizationCommand,
         CreateOrganizationResult>
 {
-    public Task<CreateOrganizationResult> Handle(
+    private readonly IOrganizationRepository _repository;
+
+    public CreateOrganizationHandler(
+        IOrganizationRepository repository)
+    {
+        _repository = repository;
+    }
+
+    public async Task<CreateOrganizationResult> Handle(
         CreateOrganizationCommand command,
         CancellationToken cancellationToken)
     {
-        var organization = Organization.Create(command.Name);
+        var organization =
+            Organization.Create(command.Name);
 
-        var result = new CreateOrganizationResult(
+        await _repository.AddAsync(
+            organization,
+            cancellationToken);
+
+        await _repository.SaveChangesAsync(
+            cancellationToken);
+
+        return new CreateOrganizationResult(
             organization.Id,
             organization.Name);
-
-        return Task.FromResult(result);
     }
 }

@@ -1,6 +1,7 @@
 using DevFlow.Api.Contracts.Organizations;
 using DevFlow.Application.Abstractions;
 using DevFlow.Application.Organizations.CreateOrganization;
+using DevFlow.Application.Organizations.GetOrganization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFlow.Api.Controllers;
@@ -10,10 +11,16 @@ namespace DevFlow.Api.Controllers;
 public sealed class OrganizationsController : ControllerBase
 {
     private readonly ICommandHandler<CreateOrganizationCommand, CreateOrganizationResult> _handler;
+    private readonly GetOrganizationHandler _getHandler;
 
-    public OrganizationsController(ICommandHandler<CreateOrganizationCommand, CreateOrganizationResult> handler)
+    public OrganizationsController(
+    ICommandHandler<
+        CreateOrganizationCommand,
+        CreateOrganizationResult> createHandler,
+    GetOrganizationHandler getHandler)
     {
-        _handler = handler;
+        _handler = createHandler;
+        _getHandler = getHandler;
     }
 
     [HttpPost]
@@ -34,8 +41,21 @@ public sealed class OrganizationsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public IActionResult GetById(Guid id)
+    public async Task<IActionResult> GetById(
+    Guid id,
+    CancellationToken cancellationToken)
     {
-        return NotFound();
+        var query = new GetOrganizationQuery(id);
+
+        var result = await _getHandler.Handle(
+            query,
+            cancellationToken);
+
+        if (result is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
     }
 }

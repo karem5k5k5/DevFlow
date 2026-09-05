@@ -1,6 +1,9 @@
 using DevFlow.Api.Infrastructure.Errors;
 using DevFlow.Application.Abstractions;
 using DevFlow.Application.Organizations.CreateOrganization;
+using DevFlow.Application.Organizations.GetOrganization;
+using DevFlow.Infrastructure;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +13,14 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
+builder.Services.AddInfrastructure(builder.Configuration);
+
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddScoped<ICommandHandler<CreateOrganizationCommand, CreateOrganizationResult>, CreateOrganizationHandler>();
+
+builder.Services.AddScoped<GetOrganizationHandler>();
 
 var app = builder.Build();
 

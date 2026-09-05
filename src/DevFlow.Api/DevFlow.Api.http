@@ -7,4 +7,4 @@ Content-Type: application/json
 }
 
 ### Get Organization
-GET http://localhost:5217/api/v1/organizations/515f4ca3-2b37-4b04-b067-324024d1ed41
+GET http://localhost:5217/api/v1/organizations/e2fdb5e1-a4b9-4383-adab-321cb8b47827
